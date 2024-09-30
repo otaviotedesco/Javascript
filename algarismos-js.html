@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gerador de Números Aleatórios</title>
+</head>
+<body>
+    <script>
+        document.write("Apresentar N números aleatórios entre 1 e 99. N não é conhecido à partida. Se o número gerado aleatoriamente pertencer ao intervalo de 10 a 30, então não serão gerados outros números. Deve apresentar a sequência de números gerados.");
+        document.write("<br><br>");
+
+        function getRandomNumber(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        let numero = getRandomNumber(1, 99);
+        let contador = 0;
+        document.write("Número gerado: " + numero + "<br>");
+        
+        while (numero < 10 || numero > 30) {
+            numero = getRandomNumber(1, 99);
+            document.write("Número gerado: " + numero + "<br>");
+            contador++;
+        }
+
+        document.write("Foram gerados " + contador + " números.");
+    </script>
+</body>
+</html>
