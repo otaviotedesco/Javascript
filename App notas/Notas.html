@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplicativo de Notas</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Aplicativo de Notas</h1>
+    <div id="notes"></div>
+    <button class="add-note" onclick="addNote()">Adicionar Nota</button>
+
+    <script>
+        let notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+        function addNote() {
+            const note = {
+                id: Date.now(),
+                content: ''
+            };
+            notes.push(note);
+            saveNotes();
+            renderNotes();
+        }
+
+        function editNote(id, content) {
+            const note = notes.find(note => note.id === id);
+            note.content = content;
+            saveNotes();
+        }
+
+        function deleteNote(id) {
+            notes = notes.filter(note => note.id !== id);
+            saveNotes();
+            renderNotes();
+        }
+
+        function saveNotes() {
+            localStorage.setItem('notes', JSON.stringify(notes));
+        }
+
+        function renderNotes() {
+            const notesContainer = document.getElementById('notes');
+            notesContainer.innerHTML = '';
+            notes.forEach(note => {
+                const noteElement = document.createElement('div');
+                noteElement.className = 'note';
+                noteElement.innerHTML = `
+                    <textarea oninput="editNote(${note.id}, this.value)">${note.content}</textarea>
+                    <button onclick="deleteNote(${note.id})">Excluir</button>
+                `;
+                notesContainer.appendChild(noteElement);
+            });
+        }
+
+
+        renderNotes();
+    </script>
+</body>
+</html>
