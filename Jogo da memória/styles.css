@@ -1,0 +1,64 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+.game-container {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-gap: 10px;
+}
+.card {
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+.card img {
+    width: 80%;
+    height: 80%;
+    display: none;
+}
+.card.flipped img {
+    display: block;
+}
+.card.flipped {
+    background-color: #f9f9f9;
+}
+.stats {
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Estilo básico para o pop-up */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: white;
+    border: 2px solid black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.popup button {
+    margin: 10px;
+}
+
+/* Estilo oculto para o pop-up até ser necessário */
+.popup.hidden {
+    display: none;
+}
