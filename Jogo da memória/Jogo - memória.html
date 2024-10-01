@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Memória</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="stats">
+        <p>Tempo: <span id="time">0</span> segundos</p>
+        <p>Movimentos: <span id="moves">0</span></p>
+    </div>
+    <div class="game-container" id="game-container">
+        <!-- Cartas geradas aqui -->
+    </div>
+
+    <!-- Pop-up de vitória ou derrota -->
+    <div id="popup" class="popup hidden">
+        <p id="popup-message"></p>
+        <button id="restart-btn">Jogar Novamente</button>
+        <button id="close-btn">Fechar Jogo</button>
+    </div>
+
+    <script>
+        const images = [
+            'images-game/img-1.png', 'images-game/img-2.png', 'images-game/img-3.png', 'images-game/img-4.png',
+            'images-game/img-5.png', 'images-game/img-6.png', 'images-game/img-7.png', 'images-game/img-8.png',
+            'images-game/img-1.png', 'images-game/img-2.png', 'images-game/img-3.png', 'images-game/img-4.png',
+            'images-game/img-5.png', 'images-game/img-6.png', 'images-game/img-7.png', 'images-game/img-8.png'
+        ];
+
+        let firstCard = null;
+        let secondCard = null;
+        let moves = 0;
+        let time = 0;
+        let timerInterval;
+        let matches = 0;
+        let lockBoard = false;
+
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function startGame() {
+            const gameContainer = document.getElementById('game-container');
+            gameContainer.innerHTML = '';
+            shuffle(images);
+            images.forEach(src => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.innerHTML = `<img src="${src}" alt="Imagem da carta" class="hidden">`;
+                card.addEventListener('click', flipCard);
+                gameContainer.appendChild(card);
+            });
+            moves = 0;
+            matches = 0;
+            time = 0;
+            document.getElementById('moves').textContent = moves;
+            document.getElementById('time').textContent = time;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                time++;
+                document.getElementById('time').textContent = time;
+            }, 1000);
+            hidePopup();  // Esconde o pop-up ao reiniciar o jogo
+        }
+
+        function flipCard() {
+            if (lockBoard || this === firstCard || this.classList.contains('flipped')) return;
+            this.classList.add('flipped');
+            this.querySelector('img').classList.remove('hidden');
+            if (!firstCard) {
+                firstCard = this;
+                return;
+            }
+            secondCard = this;
+            moves++;
+            document.getElementById('moves').textContent = moves;
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            lockBoard = true;
+            const isMatch = firstCard.querySelector('img').src === secondCard.querySelector('img').src;
+            if (isMatch) {
+                matches++;
+                resetCards();
+                checkForWin();
+            } else {
+                setTimeout(() => {
+                    firstCard.classList.remove('flipped');
+                    secondCard.classList.remove('flipped');
+                    firstCard.querySelector('img').classList.add('hidden');
+                    secondCard.querySelector('img').classList.add('hidden');
+                    resetCards();
+                }, 1000);
+            }
+        }
+
+        function resetCards() {
+            [firstCard, secondCard] = [null, null];
+            lockBoard = false;
+        }
+
+        function checkForWin() {
+            if (matches === images.length / 2) {
+                showPopup('Você ganhou! Parabéns!');
+                clearInterval(timerInterval);
+            } else if (moves >= 20) {
+                showPopup('Você perdeu! Movimentos acima de 20.');
+                clearInterval(timerInterval);
+                lockBoard = true; // Desativar o jogo após o final
+            }
+        }
+
+        // Exibir o pop-up
+        function showPopup(message) {
+            const popup = document.getElementById('popup');
+            document.getElementById('popup-message').textContent = message;
+            popup.classList.remove('hidden');
+        }
+
+        // Esconder o pop-up
+        function hidePopup() {
+            const popup = document.getElementById('popup');
+            popup.classList.add('hidden');
+        }
+
+        // Fechar o jogo/página
+        document.getElementById('close-btn').addEventListener('click', () => {
+            window.close();
+        });
+
+        // Jogar novamente
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            startGame();
+        });
+
+        document.addEventListener('DOMContentLoaded', startGame);
+    </script>
+
+</body>
+</html>
